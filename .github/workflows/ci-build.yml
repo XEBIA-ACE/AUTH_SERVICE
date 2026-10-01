@@ -1,0 +1,26 @@
+name: CI Build
+'on':
+  pull_request:
+    branches:
+    - main
+    - master
+    - develop
+  push:
+    branches:
+    - main
+    - master
+    - develop
+permissions:
+  contents: read
+  pull-requests: read
+  packages: write
+  id-token: write
+  security-events: write
+jobs:
+  ci-build:
+    uses: ./.github/workflows/ci-build-reusable.yml
+    with:
+      services: '[{"name": "auth-service", "build_context": "auth-service", "dockerfile": "Dockerfile", "image": "auth-service"}]'
+      ecr_registry: ${{ vars.ECR_REGISTRY }}
+      aws_region: ${{ vars.AWS_REGION || 'us-east-1' }}
+    secrets: inherit
